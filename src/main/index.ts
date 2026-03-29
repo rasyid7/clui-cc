@@ -1137,12 +1137,10 @@ app.whenReady().then(async () => {
 
 
   // Primary: Option+Space (2 keys, doesn't conflict with shell)
-  // Fallback: Cmd+Shift+K kept as secondary shortcut
   const registered = globalShortcut.register('Alt+Space', () => toggleWindow('shortcut Alt+Space'))
   if (!registered) {
     log('Alt+Space shortcut registration failed — macOS input sources may claim it')
   }
-  globalShortcut.register('CommandOrControl+Shift+K', () => toggleWindow('shortcut Cmd/Ctrl+Shift+K'))
 
   const trayIconPath = join(__dirname, '../../resources/trayTemplate.png')
   const trayIcon = nativeImage.createFromPath(trayIconPath)
