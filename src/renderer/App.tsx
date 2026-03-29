@@ -97,11 +97,19 @@ export default function App() {
       }
     }
 
+    // When window re-appears, main already resets native state to setIgnoreMouseEvents(false).
+    // Reset lastIgnored so the next mousemove always re-evaluates and syncs state correctly —
+    // otherwise a stale lastIgnored=true would skip the IPC call for transparent areas.
+    const unsubShown = window.clui.onWindowShown?.(() => {
+      lastIgnored = null
+    })
+
     document.addEventListener('mousemove', onMouseMove)
     document.addEventListener('mouseleave', onMouseLeave)
     return () => {
       document.removeEventListener('mousemove', onMouseMove)
       document.removeEventListener('mouseleave', onMouseLeave)
+      unsubShown?.()
     }
   }, [])
 

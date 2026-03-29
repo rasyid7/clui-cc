@@ -225,6 +225,11 @@ function showWindow(source = 'unknown'): void {
   if (lastWindowBounds) {
     mainWindow.setBounds(lastWindowBounds)
   }
+  // Reset click-through: ensures buttons are immediately clickable even if the mouse
+  // is already stationary over a UI element when the window appears.
+  // The renderer's mousemove handler will restore setIgnoreMouseEvents(true) for
+  // transparent areas on the next pointer movement.
+  mainWindow.setIgnoreMouseEvents(false)
   mainWindow.webContents.focus()
   broadcast(IPC.WINDOW_SHOWN)
   if (SPACES_DEBUG) scheduleToggleSnapshots(toggleId, 'show')

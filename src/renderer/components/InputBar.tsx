@@ -59,11 +59,18 @@ export function InputBar() {
     textareaRef.current?.focus()
   }, [activeTabId])
 
-  // Focus textarea when window is shown (shortcut toggle, screenshot return)
+  // Focus textarea immediately when the OS window gains focus — fires synchronously
+  // from webContents.focus() in main, before the WINDOW_SHOWN IPC round-trip completes.
+  // This eliminates the gap where keystrokes are lost between window-show and textarea-focus.
   useEffect(() => {
-    const unsub = window.clui.onWindowShown(() => {
-      textareaRef.current?.focus()
-    })
+    const onFocus = () => { textareaRef.current?.focus() }
+    window.addEventListener('focus', onFocus)
+    return () => window.removeEventListener('focus', onFocus)
+  }, [])
+
+  // Also focus on WINDOW_SHOWN (IPC-based, arrives slightly later — belt-and-suspenders)
+  useEffect(() => {
+    const unsub = window.clui.onWindowShown(() => { textareaRef.current?.focus() })
     return unsub
   }, [])
 
